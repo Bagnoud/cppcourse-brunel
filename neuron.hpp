@@ -1,46 +1,40 @@
 #ifndef Neuron_H
 #define Neuron_H
 
-#include <vector>
-using namespace std;
-
-
 class Neuron
 {
 	public :
 		
 		//Constructor
-		Neuron (double membranePotential_ = 0.0,
-				int numberSpike_ = 0);
+		Neuron ();
 		
 		//Destructor
 		~Neuron() {};
 		
 		//Update
-		void update(double time, double current_);
+		void update(int time_, double ext_current);	///bool spike oui ou non /// avec nb de steps
 		
-		//Setters
-		void setMembranePotential(double newPotential);
-		void setNumberSpike(double newNumber);
-		void setStimulusTime(int timeOfOccurence);
-		void clearSpikeTime();
-		
+		//Getter
+		double get_V_mem();
 		
 	private :
 		
-		//Potential of the membrane V
-		double membranePotential;
+		double V_mem; // Potential of the membrane V
+		//double I_ext; /// External current
+		double tm_spike; // Time when last spike
+		long nb_spike; // Number of spikes
+		//long local_time; /// Local time
 		
-		//Number of spikes occured
-		int numberSpike;
-		
-		//time when a spike occured
-		vector<unsigned int> spikeTime;
-		
-	
+		/*
+		// Constants	//to be added in a external file
+		const double R = 20.0; // Resistance membrane
+		const double TAU = 20.0; /// Membrane time constant
+		const double V_THR = 20.0; // Threshold
+		const double T_REFR = 2.0; // Refractory time
+		const double H = 0.1; // Step time
+		const long REFR_STEPS; /// Steps per T_REFR 
+		*/
 		
 };
-
-
 
 #endif

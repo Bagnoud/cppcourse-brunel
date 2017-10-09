@@ -1,54 +1,55 @@
 #include <iostream>
 #include "neuron.hpp"
+#include "Constants.hpp"
 using namespace std;
 
 
 //Constructeur
 
-Neuron::Neuron (double membranePotential_ = 0.0, double numberSpike_ = 0.0)
-: membranePotential(membranePotential_), numberSpike(numberSpike_),
-stimulusTime()
+Neuron::Neuron ()
+	:
+	V_mem(0.0),
+	I_ext(0.0),
+	tm_spike(0.0),
+	nb_spike(0),
+	local_time(0)
 {}
 
 
 //Update
 
-void Neuron::update(double time, double current_)
+void Neuron::update(int time_, double ext_current)
 {
-	//update of the neuron..?
-	
-	///update avec la mega formule, checker tes photos pour les constantes
-	///pushback dans un tableau le potentiel membrenane a chaque update
-	///
-	
-	
-	
-	
+	if (tm_spike > 0) { //refractory period ?
+		--tm_spike;
+		
+	} else {	//Membrane potential evolving according to formula
+		if (V_mem >= 0.0){	//doesnt go into negatives
+			V_mem = exp(-h/TAU)*V_mem + ext_current*R*(1-exp(-h/TAU));
+		}
+	}
+
+
+	if (V_mem >= V_THR) //Spike occuring ?
+	{	
+		V_mem = 0.0; //reset membrane potential to 0
+		tm_spike = T_REFR; //refractory period
+		++nb_spike;	//register one spike
+		
+		///send output current
+		
+		cout << "Spike at t=" << time_ << "ms" << endl;
+	}
 }
 
 
+//Getter
 
-//Setters
-
-void Neuron::setMembranePotential(double newPotential)
+double Neuron::get_V_mem()
 {
-	membranePotential = newPotential;
+	return V_mem;
 }
 
-void Neuron::setNumberSpike(double newNumber)
-{
-	numberSpike = newNumber;
-}
-
-void Neuron::setStimulusTime(int timeOfOccurence)	///////////
-{
-	stimulusTime.push_back(timeOfOccurence);
-}
-
-void Neuron::clearStimulusTime()
-{
-	stimulusTime.clear();
-}
 
 
 

@@ -1,42 +1,43 @@
 #include <iostream>
+#include <fstream>
+#include "neuron.hpp"
+#include "Constants.hpp"
 using namespace std;
-
-
-
-///time en double
-
-//time start and stop
-constexpr int TIME_START(0);
-constexpr int TIME_STOP(100);
+/*
+///Also in external file
+int T_Stop(500);
+int h(0.1);	//step time
+int Current_Start(100);
+int Current_Stop(400);
 
 //Declaration of the current [pA]
-constexpr double EXTERNAL_CURRENT(1);
+double EXT_CURRENT(1.001);
+*/
 
-
-
-
-int main()
+int main(int argc)	///by default =1
 {
-	//Declaration of time interval
-	int time(timeStart);
+	ofstream out("data.txt"); //Output file
 	
-	//Declaration of the time when n update
-	int n(10);
+	Neuron neurone; //Construction of a neuron
 	
-	//Construction of a neuron
-	Neuron neurone;
+	int Sim_time_tot(T_Stop/h);	//total time of the simulation
 	
-
+	///check for other current
+	cout << "Current at : " << EXT_CURRENT << endl;
+	
 	//Simulation
-	for (time; time <= timeStop; ++time)
+	for (int time = 0; time <= Sim_time_tot; ++time)
 	{
-		//if update can be called
-		if (time % n == 0) {
+		if ((time > Current_Start) and (time < Current_Stop))
+		{
 			neurone.update(time, EXTERNAL_CURRENT);
-		}	
+		} else {
+			neurone.update(0.0);
+		}
 	}
-	
-	
+
+	out << neurone.get_V_mem() << "pA at t=" << time << "ms" << endl;
 
 	return 0;
 }
+
