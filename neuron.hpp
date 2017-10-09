@@ -32,9 +32,7 @@ class Neuron
 		const double V_THR = 20.0; // Threshold
 		const double T_REFR = 2.0; // Refractory time
 		const double H = 0.1; // Step time
-		//const long REFR_STEPS; /// Steps per T_REFR 
-		
-		
+			
 };
 
 #endif
