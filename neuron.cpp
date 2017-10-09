@@ -1,6 +1,7 @@
 #include <iostream>
+#include <cmath>
 #include "neuron.hpp"
-#include "Constants.hpp"
+//#include "Constants.hpp"
 using namespace std;
 
 
@@ -25,6 +26,7 @@ void Neuron::update(int time_, double ext_current)
 		
 	} else {	//Membrane potential evolving according to formula
 		if (V_mem >= 0.0){	//doesnt go into negatives
+			double h(0.1);	///
 			V_mem = exp(-h/TAU)*V_mem + ext_current*R*(1-exp(-h/TAU));
 		}
 	}
