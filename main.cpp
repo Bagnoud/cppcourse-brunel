@@ -3,6 +3,8 @@ using namespace std;
 
 
 
+///time en double
+
 //time start and stop
 constexpr int TIME_START(0);
 constexpr int TIME_STOP(100);
