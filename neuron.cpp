@@ -26,11 +26,9 @@ void Neuron::update(int time_, double ext_current)
 		
 	} else {	//Membrane potential evolving according to formula
 		if (V_mem >= 0.0){	//doesnt go into negatives
-			double h(0.1);	///
-			V_mem = exp(-h/TAU)*V_mem + ext_current*R*(1-exp(-h/TAU));
+			V_mem = exp(-H/TAU)*V_mem + ext_current*R*(1-exp(-H/TAU));
 		}
 	}
-
 
 	if (V_mem >= V_THR) //Spike occuring ?
 	{	
@@ -40,7 +38,7 @@ void Neuron::update(int time_, double ext_current)
 		
 		///send output current
 		
-		cout << "Spike at t=" << time_ << "ms" << endl;
+		cout << "Spike at t=" << time_*H << "ms" << endl;
 	}
 }
 
