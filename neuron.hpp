@@ -2,6 +2,7 @@
 #define Neuron_H
 
 #include <vector>
+#include "Constants.hpp"
 
 class Neuron
 {
@@ -26,22 +27,15 @@ class Neuron
 	private :
 		
 		double V_mem; // Potential of the membrane V
-		//double I_ext; /// External current
 		double tm_spike; // Time when last spike
 		long nb_spike; // Number of spikes
 		long local_time; // Local time
 		std::vector<double> buffer; //buffer containing incoming spikes
 		
-
-		// Constants	//to be added in a external file
-		const double R = 20.0; // Resistance membrane
-		const double TAU = 20.0; /// Membrane time constant
-		const double V_THR = 20.0; // Threshold
-		const double T_REFR = 2.0; // Refractory time
-		const double H = 0.1; // Step time
-		const double Delay = 1.5; //Delay of spike
-		const double J_Spike = 0.1; //mV spike sent
-			
+		//constants used in membrane potential
+		double C1;
+		double C2;
+		
 };
 
 #endif
