@@ -18,6 +18,24 @@ Neuron::Neuron ()
 	buffer.resize((Delay/h)+1);
 }
 
+Neuron::Neuron (Type_of_Neuron type)
+	:
+	V_mem(0.0),
+	tm_spike(0.0),
+	nb_spike(0),
+	local_time(0),
+	C1(0),
+	C2(0)
+{
+	buffer.resize((Delay/h)+1);
+	
+	if (type == EXCITATORY) {
+		type_of_neuron = EXCITATORY;
+	} else {
+		type_of_neuron = INHIBITORY;
+	}
+}
+
 
 //Update
 bool Neuron::update(int time_, double ext_current)
@@ -26,14 +44,14 @@ bool Neuron::update(int time_, double ext_current)
 	local_time = time_;
 	
 	//incoming spike to be added
-	double J(0.0);
+	double J_buffer(0.0);
 	
 	
 	//checks if a spike need to be added to the membrane potential
 	if (buffer[local_time % buffer.size()] > 0)
 	{
 		//redefinition of J, to be added
-		J = buffer[local_time % buffer.size()];
+		J_buffer = buffer[local_time % buffer.size()];
 		//cleaning of the buffer 
 		buffer[local_time % buffer.size()] = 0.0;
 	}
@@ -44,30 +62,23 @@ bool Neuron::update(int time_, double ext_current)
 	//checks if refractory period
 	if (tm_spike > 0) {
 		--tm_spike;
-	
-	//Membrane potential evolving according to formula	
+		
 	} else {
-		//membrane potential doesnt go into negatives
-		if (V_mem >= 0.0)
-		{
-			C1 = exp(-h/TAU)*V_mem;
-			C2 = R*(1-exp(-h/TAU));
-			
-			//updating membrane potential (+ J if additional spike)
-			V_mem = C1 + ext_current*C2 + J;
+		
+		if (V_mem >= 0.0) { //membrane potential doesnt go into negatives
+			Compute_V_mem(J_buffer);
 		}
 	}
 
-	//checks if spike occuring
+
+	///checks if spike occuring 
+
 	if (V_mem >= V_THR)
 	{	
 		V_mem = 0.0; //reset membrane potential to 0
 		tm_spike = T_REFR; //sets refractory period
 		++nb_spike;	//register one spike
-		
-		///for terminal
-		cout << "Spike at t=" << local_time*h << "ms" << endl;
-		
+
 		//we have a spike
 		return true;
 	}
@@ -79,10 +90,33 @@ bool Neuron::update(int time_, double ext_current)
 
 
 
+void Neuron::Compute_V_mem(double J_Buffer_)
+{
+	///Je spike ? ou J dépendant du type ?
+	//déclaration de la distribution
+	poisson_distribution<> poisson(Vext*0.1*Nb_excitatory*h*Je_Spike);
+	random_device rd;
+	mt19937 gen(rd());
+			
+	C1 = exp(-h/TAU)*V_mem;
+	C2 = R*(1-exp(-h/TAU));
+			
+	//updating membrane potential (+ J if additional spike)
+	V_mem = C1 + J_Buffer_ + poisson(gen);
+	
+	///+ ext_current*C2
+}
+
+
+
+
+
+
+///différentier E ou I
 void Neuron::plugin_spike()
 {
 	//add in the buffer 
-	buffer[local_time % (buffer.size())] += J_Spike;
+	buffer[local_time % (buffer.size())] += Je_Spike;
 }
 
 
