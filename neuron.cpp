@@ -66,7 +66,7 @@ bool Neuron::update(int time_, double ext_current)
 	} else {
 		
 		if (V_mem >= 0.0) { //membrane potential doesnt go into negatives
-			Compute_V_mem(J_buffer);
+			Compute_V_mem(J_buffer, ext_current);
 		}
 	}
 
@@ -88,13 +88,13 @@ bool Neuron::update(int time_, double ext_current)
 }
 
 
+///voir qui envoie ext current et comment on pourrait le modifier !!!!!!!!!!!!!!!!!!!!!
 
-
-void Neuron::Compute_V_mem(double J_Buffer_)
+void Neuron::Compute_V_mem(double J_Buffer_, double ext_current)
 {
 	///Je spike ? ou J dépendant du type ?
 	//déclaration de la distribution
-	poisson_distribution<> poisson(Vext*0.1*Nb_excitatory*h*Je_Spike);
+	poisson_distribution<> poisson(Vext*0.1*0.8*Nb_neurons*h*Je_Spike);
 	random_device rd;
 	mt19937 gen(rd());
 			
@@ -102,7 +102,7 @@ void Neuron::Compute_V_mem(double J_Buffer_)
 	C2 = R*(1-exp(-h/TAU));
 			
 	//updating membrane potential (+ J if additional spike)
-	V_mem = C1 + J_Buffer_ + poisson(gen);
+	V_mem = C1 + ext_current*C2 + J_Buffer_ + poisson(gen);
 	
 	///+ ext_current*C2
 }
@@ -113,13 +113,22 @@ void Neuron::Compute_V_mem(double J_Buffer_)
 
 
 ///différentier E ou I
-void Neuron::plugin_spike()
+void Neuron::plugin_spike(double incoming_spike)
 {
 	//add in the buffer 
-	buffer[local_time % (buffer.size())] += Je_Spike;
+	buffer[local_time % (buffer.size())] += incoming_spike;
 }
 
 
+
+bool Neuron::is_excitatory()
+{
+	if (type_of_neuron == EXCITATORY) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 
 

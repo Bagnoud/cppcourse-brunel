@@ -22,13 +22,18 @@ class Neuron
 		//Update
 			//update the membrane potential, check for spike
 			bool update(int time_, double ext_current);
-			void Compute_V_mem(double J_Buffer_);
+			void Compute_V_mem(double J_Buffer_, double ext_current);
 			
 			//add and incoming current to the buffer
-			void plugin_spike();
+			void plugin_spike(double incoming_spike);
+		
+		//bool
+		bool is_excitatory();
 		
 		//Getter
 		double get_V_mem();
+		
+		
 		
 	private :
 		

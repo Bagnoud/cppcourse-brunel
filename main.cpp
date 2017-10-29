@@ -14,9 +14,6 @@ int main()	///by default =1
 	ofstream out("data.txt");
 	
 	
-	//total time of the simulation
-	long Sim_time_tot(T_Stop/h);
-	
 	//for terminal
 	cout << "Current at : " << EXT_CURRENT << "mV" << endl;
 	//add a function to change when calling the program, check if 
@@ -82,11 +79,15 @@ int main()	///by default =1
 ///multi neurons
 	
 	//construction des Neurones
-	const int Total_Nb_Neurons(Nb_excitatory + Nb_inhibitory);
+	const int Nb_excitatory = 0.8 * Nb_neurons;	//80% of excitatory
+	const int Nb_inhibitory = 0.2 * Nb_neurons;	//20% of inhibitory
 	
+	
+	
+	//-----------------------------------------------------------------
 	cout << "Creating Neurons" << endl;
 	
-	array<Neuron, Total_Nb_Neurons> Neurons;
+	array<Neuron, Nb_neurons> Neurons;
 	
 	for(int i(0); i < Nb_excitatory; ++i) {
 		Neurons[i] = Neuron(EXCITATORY);
@@ -97,13 +98,17 @@ int main()	///by default =1
 	}
 	
 	
+	
+	
+	
+	//-----------------------------------------------------------------
 	cout << "Establishing connections" << endl;
 	
 	//list of connections
-	array<array<int,Total_Nb_Neurons>, Total_Nb_Neurons> Network;
+	array<array<int,Nb_neurons>, Nb_neurons> Network;
 	
 	//Initialisation of each case to 0 in Network array
-	for (size_t i(0); i < Network.size(); ++i) {
+	for(size_t i(0); i < Network.size(); ++i) {
 		for (size_t j(0); j < Network.size(); ++j) {
 			Network[i][j] = 0;
 		}
@@ -113,10 +118,10 @@ int main()	///by default =1
 	
 	//go through all the columns
 	//each neurons recieves 10% connection of all the neurons
-	for (size_t j(0); j < Network.size(); ++j){
+	for(size_t j(0); j < Network.size(); ++j){
 		
 		//10% of excitatory
-		for (int n(0); n < 0.1*Nb_excitatory; ++n) {
+		for(int n(0); n < 0.1*Nb_excitatory; ++n) {
 			
 			//generating random number in Excitatory neurons
 			random_device rd;
@@ -128,24 +133,70 @@ int main()	///by default =1
 		}
 		
 		//10% of inhibitory
-		for (int n(0); n < 0.1*Nb_inhibitory; ++n) {
+		for(int n(0); n < 0.1*Nb_inhibitory; ++n) {
 			
 			//generating random number in Excitatory neurons
 			random_device rd;
 			mt19937 gen(rd());
-			uniform_int_distribution<> connection_from(Nb_excitatory, Total_Nb_Neurons-1);
+			uniform_int_distribution<> connection_from(Nb_excitatory, Nb_neurons-1);
 			
 			//adding a connection
 			Network[connection_from(gen)][j] += 1;
 		}
 	}
-			
+	
+	
+	
+	
+	
+	//-----------------------------------------------------------------		
 	cout << "Running the simulation" << endl;
 	
-
+	int progress_time(0.25*T_Stop);
+	int progress_percentage(25);
 	
 	
+	//running the simulation
+	for(long time = 0; time <= T_Stop; ++time)
+	{
+		//cout the progress for the terminal
+		if(time >= progress_time) {
+			cout << progress_percentage << "%" << endl;
+			progress_percentage += 25;
+			progress_time += 0.25*T_Stop;
+		}
+		
+		
+		//going through each neuron
+		for(size_t i(0); i < Neurons.size(); ++i)
+		{
+			//updating + checking if one spikes
+			if(Neurons[i].update(time, EXT_CURRENT))
+			{
+				//going trough all the possible connections
+				for(size_t j(0); j < Network.size(); ++j)
+				{
+					//checks if there is a connection
+					if(Network[i][j] >= 1) {
+						
+						//maybe the neurons are connected 1 or more time
+						int Nb_of_connections(Network[i][j]);
+						
+						//checks if the spiking neuron is excitatory
+						//and send the signal to the connected neuron
+						if(Neurons[i].is_excitatory()){
+							Neurons[j].plugin_spike(Nb_of_connections*Je_Spike);
+						} else {
+							Neurons[j].plugin_spike(Nb_of_connections*Ji_Spike);
+						}
+					}
+				}
+			}			
+		}
+	}
 
+
+	cout << "Simulation done" << endl;
 	return 0;
 }
 
