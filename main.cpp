@@ -1,82 +1,16 @@
 #include <iostream>
 #include <fstream>
 #include "neuron.hpp"
-#include <array>
+#include <vector>
 using namespace std;
 
 
-
-
-int main()	///by default =1
+int main()
 {
 	
 	//Output file
 	ofstream out("data.txt");
-	
-	
-	//for terminal
-	cout << "Current at : " << EXT_CURRENT << "mV" << endl;
-	//add a function to change when calling the program, check if 
-	//higher than 1.01
-	
-	
-	
-///One neuron only
-/*
-	Neuron neuron;
-	//Simulation
-	for (long time = 0; time <= T_Stop; ++time)	/// to remove
-	{
-		
-		if ((time > Current_Start) and (time < Current_Stop))
-		{
-			neuron.update(time, EXT_CURRENT);
-		} else {
-			neuron.update(time, 0.0);
-		}
-		
-		out << neuron.get_V_mem() << "pA at t=" << time*h << "ms" << endl;
-	}
-*/
-	
-	
-///two neurons
-/*	
-	vector<Neuron> neurons; //Construction of a neuron
-	Neuron n1;
-	Neuron n2;
-	neurons.push_back(n1);
-	neurons.push_back(n2);
-	
-	//Simulation time
-	for (long time = 0; time <= T_Stop; ++time)
-	{
-		//checks if there is current or not
-		if ((time > Current_Start) and (time < Current_Stop))
-		{
-			//only the first gets current here
-			if (neurons[0].update(time, EXT_CURRENT)) {
-				//spike has occured, we pass the spike to the other
-				neurons[1].plugin_spike();
-			}
-			
-			//the second one doesnt get current in this simulation
-			neurons[1].update(time, 0.0);
-		
-		//out of the times with current, no current is given	
-		} else {
-			neurons[0].update(time, 0.0);
-			neurons[1].update(time, 0.0);
-		}
 
-		//printing in file
-		out << 1 << "->" << neurons[0].get_V_mem() << "pA at t=" << time*h << "ms" << "\t" << "\t"
-			<< 2 << "->" << neurons[1].get_V_mem() << "pA at t=" << time*h << "ms" << endl;
-	}
-*/	
-	
-	
-///multi neurons
 	
 	//construction des Neurones
 	const int Nb_excitatory = 0.8 * Nb_neurons;	//80% of excitatory
@@ -87,70 +21,67 @@ int main()	///by default =1
 	//-----------------------------------------------------------------
 	cout << "Creating Neurons" << endl;
 	
-	array<Neuron, Nb_neurons> Neurons;
+	vector<Neuron> Neurons;
 	
 	for(int i(0); i < Nb_excitatory; ++i) {
-		Neurons[i] = Neuron(EXCITATORY);
+		Neurons.push_back(Neuron(EXCITATORY));
 	}
 	
 	for(size_t i(Nb_excitatory); i < Neurons.size(); ++i) {
-		Neurons[i] = Neuron(INHIBITORY);
+		Neurons.push_back(Neuron(INHIBITORY));
 	}
-	
-	
+
 	
 	
 	
 	//-----------------------------------------------------------------
 	cout << "Establishing connections" << endl;
 	
-	//list of connections
-	array<array<int,Nb_neurons>, Nb_neurons> Network;
+	vector<vector<int>> Network;
 	
-	//Initialisation of each case to 0 in Network array
-	for(size_t i(0); i < Network.size(); ++i) {
-		for (size_t j(0); j < Network.size(); ++j) {
-			Network[i][j] = 0;
-		}
+	for(int i(0); i < Nb_neurons; ++i)
+	{
+		vector<int> list;
+		Network.push_back(list);
 	}
-
-	//Establishing connections
 	
-	//go through all the columns
-	//each neurons recieves 10% connection of all the neurons
-	for(size_t j(0); j < Network.size(); ++j){
-		
-		//10% of excitatory
-		for(int n(0); n < 0.1*Nb_excitatory; ++n) {
-			
+	
+	//boucle sur chaque neurone pour lui trouver ses connections
+	for(int i(0); i < Nb_neurons; ++i)
+	{
+		//10% of excitatory neurons
+		for(int n(0); n < 0.1*Nb_excitatory; ++n)
+		{
 			//generating random number in Excitatory neurons
-			random_device rd;
-			mt19937 gen(rd());
-			uniform_int_distribution<> connection_from(0, Nb_excitatory-1);
+			static random_device rd;
+			static mt19937 gen(rd());
+			static uniform_int_distribution<> connection_from(0, Nb_excitatory-1);
 			
-			//adding a connection
-			Network[connection_from(gen)][j] += 1;
+			//adding a connection from random to i
+			Network[connection_from(gen)].push_back(i);
 		}
 		
 		//10% of inhibitory
 		for(int n(0); n < 0.1*Nb_inhibitory; ++n) {
 			
 			//generating random number in Excitatory neurons
-			random_device rd;
-			mt19937 gen(rd());
-			uniform_int_distribution<> connection_from(Nb_excitatory, Nb_neurons-1);
+			static random_device rd;
+			static mt19937 gen(rd());
+			static uniform_int_distribution<> connection_from(Nb_excitatory, Nb_neurons-1);
 			
-			//adding a connection
-			Network[connection_from(gen)][j] += 1;
-		}
+			//adding a connection from random to i
+			Network[connection_from(gen)].push_back(i);
+		}	
 	}
 	
+
 	
 	
-	
-	
+		
 	//-----------------------------------------------------------------		
 	cout << "Running the simulation" << endl;
+	
+	
 	
 	int progress_time(0.25*T_Stop);
 	int progress_percentage(25);
@@ -173,43 +104,40 @@ int main()	///by default =1
 			//updating + checking if one spikes
 			if(Neurons[i].update(time, EXT_CURRENT))
 			{
-				//going trough all the possible connections
-				for(size_t j(0); j < Network.size(); ++j)
+				//going trough all the connections of neuron i
+				for(size_t j(0); j < Network[i].size(); ++j)
 				{
-					//checks if there is a connection
-					if(Network[i][j] >= 1) {
-						
-						//maybe the neurons are connected 1 or more time
-						int Nb_of_connections(Network[i][j]);
-						
-						//checks if the spiking neuron is excitatory
-						//and send the signal to the connected neuron
-						if(Neurons[i].is_excitatory()){
-							Neurons[j].plugin_spike(Nb_of_connections*Je_Spike);
-						} else {
-							Neurons[j].plugin_spike(Nb_of_connections*Ji_Spike);
-						}
+					//checks if the spiking neuron is excitatory
+					//and send the signal to the connected neuron
+					if(Neurons[i].is_excitatory()){
+						Neurons[j].plugin_spike(Je_Spike);
+					} else {
+						Neurons[j].plugin_spike(Ji_Spike);
 					}
 				}
-			}			
-		}
+			}
+		}			
+		
+		out << time << "	" << Neurons[0].get_V_mem() << endl;
 	}
 
+	
 
 	cout << "Simulation done" << endl;
 	return 0;
 }
 
+//top graph
+//rescale with ms 
+/// spike_time << "\t" << neuron _id << "\n";
 
+//under graph
+/// 
 
+///checker avec assert pour voir le segfault
+///#include <cassert>
 
-
-
-
-
-
-
-
+//doxygen cmake intergration -> google
 
 
 
