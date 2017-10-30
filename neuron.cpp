@@ -57,9 +57,10 @@ bool Neuron::update(int time_, double ext_current)
 	//we take the same time of the main program
 	local_time = time_;
 	
-	
 	//incoming spike to be added
 	double J_buffer(0.0);
+	
+	
 	
 	//checks if a spike need to be added to the membrane potential
 	if (buffer[local_time % buffer.size()] > 0)
@@ -71,6 +72,7 @@ bool Neuron::update(int time_, double ext_current)
 	}
 	
 	
+	
 	///Updating membrane potential
 	
 	//checks if refractory period
@@ -79,6 +81,7 @@ bool Neuron::update(int time_, double ext_current)
 		
 	//we are not in a refractory period -> we update 
 	} else {
+		
 		if (V_mem >= 0.0) { //membrane potential doesnt go into negatives
 			Compute_V_mem(J_buffer, ext_current);
 		}
@@ -86,12 +89,13 @@ bool Neuron::update(int time_, double ext_current)
 
 
 	///checks if spike occuring
+	
 	if (V_mem >= V_THR)
 	{	
 		V_mem = 0.0; //reset membrane potential to 0
 		tm_spike = T_REFR; //sets refractory period
 		++nb_spike;	//register one spike
-		tm_spike_at = time_;
+		tm_spike_at = time_; //writes when the spike occured
 
 		//we have a spike
 		return true;
@@ -106,6 +110,7 @@ bool Neuron::update(int time_, double ext_current)
 
 
 
+
 /**
  * Compute the membrane potential
  * @param J_Buffer_ : potential to be added which was in the buffer
@@ -113,12 +118,12 @@ bool Neuron::update(int time_, double ext_current)
  */
 void Neuron::Compute_V_mem(double J_Buffer_, double ext_current)
 {
-	//déclaration of the Poisson distribution
+	//Declaration of the Poisson distribution
 	static random_device rd;
 	static mt19937 gen(rd());
 	static poisson_distribution<> poisson(Lambda);
 	
-	//we don't want negative currents
+	//we don't want negative external current
 	if (ext_current < 0) { ext_current = 0; }
 			
 	C1 = exp(-h/TAU)*V_mem;
@@ -149,6 +154,7 @@ void Neuron::plugin_spike(double incoming_spike)
 
 
 
+
 /**
  * Checks if the neuron is excitatory
  * @return true : neuron is excitatory
@@ -167,7 +173,6 @@ bool Neuron::is_excitatory()
 
 
 
-
 /**
  * Getter for membrane potential
  * @return membrane Potential
@@ -178,6 +183,8 @@ double Neuron::get_V_mem()
 }
 
 
+
+
 /**
  * Return the time when the spike occured in the neuron
  * @return tm_spike_at : time when spiked
@@ -186,6 +193,8 @@ double Neuron::get_spiked_at()
 {
 	return tm_spike_at;
 }
+
+
 
 
 
@@ -252,6 +261,9 @@ bool Neuron::update_TEST(int time_, double ext_current)
 	//no spike has occured, by default
 	return false;
 }
+
+
+
 
 
 

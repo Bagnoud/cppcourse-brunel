@@ -16,6 +16,7 @@ Network::Network ()
 {}
 
 
+
 /**
  * Creating neurons : filling a vector
  * with all the neurons
@@ -32,6 +33,8 @@ void Network::Creating_Neurons()
 }
 
 
+
+
 /**
  * Creating connections : fills a vector of vectors with
  * the list of neurons that each neuron is connected to.
@@ -39,6 +42,7 @@ void Network::Creating_Neurons()
 void Network::Creating_Connections()
 {
 	
+	//filling the lines of empty vectors
 	for(int i(0); i < Nb_neurons; ++i)
 	{
 		vector<int> list;
@@ -46,6 +50,7 @@ void Network::Creating_Connections()
 	}
 	
 	
+	//creating random connections for each neuron
 	for(int i(0); i < Nb_neurons; ++i)
 	{
 		//10% of excitatory neurons
@@ -63,7 +68,7 @@ void Network::Creating_Connections()
 		//10% of inhibitory
 		for(int n(0); n < 0.1*Nb_inhibitory; ++n) {
 			
-			//generating random number in Excitatory neurons
+			//generating random number in Inhibitory neurons
 			static random_device rd;
 			static mt19937 gen(rd());
 			static uniform_int_distribution<> connection_from(Nb_excitatory, Nb_neurons-1);
@@ -73,6 +78,7 @@ void Network::Creating_Connections()
 		}	
 	}
 }
+
 
 
 
@@ -120,6 +126,9 @@ void Network::Running_Simulation()
 
 
 
+
+
+
 /**
  * cout the progress of the program, each 25%.
  * usefull to check if the program is working.
@@ -134,6 +143,31 @@ void Network::Progress_time(long time)
 	}
 }
 
+
+
+
+
+/**
+ * Used in Google test, counts the number of connections
+ * leading to one neuron, here we test for the 4th neuron
+ */
+double Network::Count_number_connections(int which_neuron)
+{
+	double number_of_connections(0);
+	
+	for(size_t i(0); i < Connections.size(); ++i)
+	{
+		for(size_t j(0); j < Connections[i].size(); ++j)
+		{
+			if(Connections[i][j] == which_neuron)
+			{
+				++number_of_connections;
+			}
+		}
+	}
+	
+	return number_of_connections;	
+}
 
 
 

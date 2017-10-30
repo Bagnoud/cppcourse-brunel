@@ -23,7 +23,6 @@ class Neuron
 		//Update
 			//update the membrane potential, check for spike
 			bool update(int time_, double ext_current);
-			bool update_TEST(int time_, double ext_current);
 			void Compute_V_mem(double J_Buffer_, double ext_current);
 			
 			//add and incoming current to the buffer
@@ -36,6 +35,7 @@ class Neuron
 		double get_V_mem();
 		
 		//Google test
+		bool update_TEST(int time_, double ext_current);
 		double get_spiked_at();
 		long get_nb_spikes();
 		
