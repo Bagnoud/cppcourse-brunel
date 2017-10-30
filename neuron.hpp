@@ -1,9 +1,11 @@
 #ifndef Neuron_H
 #define Neuron_H
 
-//#include <vector>
+#include <vector>
 #include "Constants.hpp"
+#include <fstream>
 #include <random>
+#include <iostream>
 
 class Neuron
 {
@@ -21,6 +23,7 @@ class Neuron
 		//Update
 			//update the membrane potential, check for spike
 			bool update(int time_, double ext_current);
+			bool update_TEST(int time_, double ext_current);
 			void Compute_V_mem(double J_Buffer_, double ext_current);
 			
 			//add and incoming current to the buffer
@@ -32,12 +35,17 @@ class Neuron
 		//Getter
 		double get_V_mem();
 		
+		//Google test
+		double get_spiked_at();
+		long get_nb_spikes();
+		
 		
 		
 	private :
 		
 		double V_mem; //!< Potential of the membrane V
 		double tm_spike; //!< Time when last spike
+		double tm_spike_at; //!< Time when spike occured
 		long nb_spike; //!< Number of spikes
 		long local_time; //!< Local time
 		std::vector<double> buffer; //!<buffer containing incoming spikes
