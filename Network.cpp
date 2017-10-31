@@ -113,10 +113,12 @@ void Network::Running_Simulation()
 				{
 					//checks if the spiking neuron is excitatory
 					//and send the signal to the connected neuron
+					int connected(Connections[i][j]);
+					
 					if(Neurons[i].is_excitatory()){
-						Neurons[j].plugin_spike(Je_Spike);
+						Neurons[connected].plugin_spike(Je_Spike);
 					} else {
-						Neurons[j].plugin_spike(Ji_Spike);
+						Neurons[connected].plugin_spike(Ji_Spike);
 					}
 				}
 			}
