@@ -73,7 +73,7 @@ bool Neuron::update(int time_, double ext_current)
 	
 	
 	
-	///Updating membrane potential
+	//Updating membrane potential
 	
 	//checks if refractory period
 	if (tm_spike > 0) {
@@ -88,7 +88,7 @@ bool Neuron::update(int time_, double ext_current)
 	}
 
 
-	///checks if spike occuring
+	//checks if spike occuring
 	
 	if (V_mem >= V_THR)
 	{	

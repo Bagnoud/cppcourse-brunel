@@ -3,7 +3,7 @@
 
 
 //Time
-const int T_Stop = 5000;	//!< Time when simulation stops
+const int T_Stop = 2000;	//!< Time when simulation stops
 const double h = 0.1;	//!< step time
 
 //Declaration of the current [pA]
