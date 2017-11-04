@@ -124,6 +124,8 @@ void Network::Running_Simulation()
 			}
 		}
 	}
+	
+	out.close();
 }
 
 
