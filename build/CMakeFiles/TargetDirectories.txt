@@ -1,0 +1,10 @@
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/CMakeFiles/rebuild_cache.dir
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/CMakeFiles/edit_cache.dir
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/CMakeFiles/test.dir
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/CMakeFiles/neuron_unittest.dir
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/CMakeFiles/Neuron.dir
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/googletest/CMakeFiles/test.dir
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/googletest/CMakeFiles/rebuild_cache.dir
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/googletest/CMakeFiles/edit_cache.dir
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/googletest/CMakeFiles/gtest_main.dir
+/Users/bagnoud/Desktop/CS116-2017-Alexandre-Bagnoud/build/googletest/CMakeFiles/gtest.dir
