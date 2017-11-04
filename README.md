@@ -11,7 +11,12 @@ neuron.cpp
 neuron.hpp
 neuron_unittest.cpp
 
+The current version reproduces the graph C of figure 8, described in Brunel, N J. Comp Neuroscience 2000.
+
 Constants such as time of the simulation can be changed in the file Constants.hpp
+
+./Neuron to run the simulation
+./neuron_unittest to run the tests
 
 Data will be printed on the file "data.txt"
 
