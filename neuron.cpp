@@ -63,7 +63,7 @@ bool Neuron::update(int time_, double ext_current)
 	
 	
 	//checks if a spike need to be added to the membrane potential
-	if (buffer[local_time % buffer.size()] > 0)
+	if (buffer[local_time % buffer.size()] != 0)
 	{
 		//redefinition of J, to be added
 		J_buffer = buffer[local_time % buffer.size()];
@@ -82,9 +82,8 @@ bool Neuron::update(int time_, double ext_current)
 	//we are not in a refractory period -> we update 
 	} else {
 		
-		if (V_mem >= 0.0) { //membrane potential doesnt go into negatives
+			//calculate the new membrane potential
 			Compute_V_mem(J_buffer, ext_current);
-		}
 	}
 
 
@@ -133,6 +132,10 @@ void Neuron::Compute_V_mem(double J_Buffer_, double ext_current)
 			
 	//updating membrane potential (+ added_potential if additional spike)
 	V_mem = C1 + ext_current*C2 + added_potential;
+	
+	if (V_mem < 0.0) {
+		V_mem = 0.0;
+	}
 }
 
 
